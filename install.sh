@@ -10,12 +10,13 @@ PROJECT_DIR="ElainaBot-OneClick"
 
 echo -e "${GREEN}>>> 开始安装 ElainaBot...${NC}"
 
-# 1. 确保在项目目录中
+# 1. 克隆仓库 (如果当前不在项目目录中)
 if [ ! -f "main.py" ]; then
     if [ -d "$PROJECT_DIR" ]; then
+        echo -e "检测到已存在目录，正在进入..."
         cd "$PROJECT_DIR"
     else
-        echo -e "正在克隆完整项目代码..."
+        echo -e "正在克隆项目代码..."
         git clone -q https://github.com/ovoox/ElainaBot-OneClick.git
         if [ $? -ne 0 ]; then
             echo -e "${RED}错误：克隆仓库失败，请检查网络。${NC}"
