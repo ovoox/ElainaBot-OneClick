@@ -6,30 +6,29 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m'
 
+PROJECT_DIR="ElainaBot-OneClick"
+
 echo -e "${GREEN}>>> 开始安装 ElainaBot...${NC}"
 
-# 1. 安装系统依赖
-if [ -f /etc/debian_version ]; then
-    echo -e "正在安装系统依赖..."
-    sudo apt-get update -qq && sudo apt-get install -y python3 python3-pip python3-venv mysql-server libmagic1 curl git -qq
-fi
-
-# 2. 确保在正确的项目目录中
-PROJECT_DIR="ElainaBot-OneClick"
+# 1. 确保在项目目录中
 if [ ! -f "main.py" ]; then
     if [ -d "$PROJECT_DIR" ]; then
         cd "$PROJECT_DIR"
     else
         echo -e "正在克隆完整项目代码..."
         git clone -q https://github.com/ovoox/ElainaBot-OneClick.git
+        if [ $? -ne 0 ]; then
+            echo -e "${RED}错误：克隆仓库失败，请检查网络。${NC}"
+            exit 1
+        fi
         cd "$PROJECT_DIR"
     fi
 fi
 
-# 检查关键文件是否存在
-if [ ! -f "requirements.txt" ] || [ ! -f "main.py" ]; then
-    echo -e "${RED}错误：未能在目录中找到关键文件，请检查网络后重试。${NC}"
-    exit 1
+# 2. 安装系统依赖
+if [ -f /etc/debian_version ]; then
+    echo -e "正在安装系统依赖..."
+    sudo apt-get update -qq && sudo apt-get install -y python3 python3-pip python3-venv mysql-server libmagic1 curl git -qq
 fi
 
 # 3. 安装 Python 依赖
