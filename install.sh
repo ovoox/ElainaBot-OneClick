@@ -3,28 +3,43 @@
 # 颜色定义
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
+RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${GREEN}>>> 开始安装 ElainaBot...${NC}"
 
 # 1. 安装系统依赖
 if [ -f /etc/debian_version ]; then
+    echo -e "正在安装系统依赖..."
     sudo apt-get update -qq && sudo apt-get install -y python3 python3-pip python3-venv mysql-server libmagic1 curl git -qq
 fi
 
-# 2. 克隆代码 (如果不在目录中)
+# 2. 确保在正确的项目目录中
+PROJECT_DIR="ElainaBot-OneClick"
 if [ ! -f "main.py" ]; then
-    git clone -q https://github.com/ovoox/ElainaBot-OneClick.git
-    cd ElainaBot-OneClick
+    if [ -d "$PROJECT_DIR" ]; then
+        cd "$PROJECT_DIR"
+    else
+        echo -e "正在克隆完整项目代码..."
+        git clone -q https://github.com/ovoox/ElainaBot-OneClick.git
+        cd "$PROJECT_DIR"
+    fi
+fi
+
+# 检查关键文件是否存在
+if [ ! -f "requirements.txt" ] || [ ! -f "main.py" ]; then
+    echo -e "${RED}错误：未能在目录中找到关键文件，请检查网络后重试。${NC}"
+    exit 1
 fi
 
 # 3. 安装 Python 依赖
+echo -e "正在准备 Python 环境并安装依赖..."
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt -q
 
 # 4. 交互式输入
-echo -e "${GREEN}请填写以下信息：${NC}"
+echo -e "\n${GREEN}请填写以下信息：${NC}"
 read -p "请输入机器人 APPID: " appid
 read -p "请输入机器人 SECRET: " secret
 read -p "请输入机器人 QQ号: " qq
